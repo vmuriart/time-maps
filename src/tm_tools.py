@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import datetime as dt
@@ -231,3 +232,19 @@ def analyze_tweet_times(screen_name, tweets, make_heat):
     plt.savefig(screen_name + '.eps', format='eps', bbox_inches='tight', dpi=200)  # save as eps
 
     return times, times_tot_mins, sep_array
+
+
+def main(screen_name, make_heat=True):
+    # specify a twitter username and whether you want a heated time map or a normal time map
+    # an eps file will be saved with the same name as the twitter username
+    # the axes are automatically scaled logarithmically.
+
+    # download tweets
+    tweets = grab_tweets(screen_name)
+
+    # create plot
+    times, times_tot_mins, sep_array = analyze_tweet_times(screen_name, tweets, make_heat)
+
+
+if __name__ == '__main__':
+    main(screen_name='BarackObama')
