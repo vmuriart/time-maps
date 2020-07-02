@@ -9,42 +9,36 @@ from twython import Twython
 
 
 def my_secrets():
-    # store your twitter codes
+    """Store your twitter codes."""
     d = {
         'APP_KEY': '--',
         'APP_SECRET': '--',
-        'my_access_token_key': '--',
-        'my_access_token_secret': '--',
     }
 
     return d
 
 
 def twitter_auth2():
-    # for Twython authentication
+    """For Twython authentication."""
     secrets = my_secrets()
 
     APP_KEY = secrets['APP_KEY']
     APP_SECRET = secrets['APP_SECRET']
 
     twitter = Twython(APP_KEY, APP_SECRET, oauth_version=2)
-    ACCESS_TOKEN = twitter.obtain_access_token()
-
-    twitter = Twython(APP_KEY, access_token=ACCESS_TOKEN)
+    twitter = Twython(APP_KEY, access_token=twitter.obtain_access_token())
     return twitter
 
 
-def get_dt(t):
-    # converts a twitter time string to a datetime object
-    splitted = t.split(' ')
-    new_string = ' '.join(splitted[:4]) + ' ' + splitted[-1]
-    my_datetime = dt.datetime.strptime(new_string, '%c')
-
-    return my_datetime
+def get_dt(s):
+    """Converts a twitter time string to a datetime object."""
+    split = s.split(' ')
+    s = ' '.join(split[:4]) + ' ' + split[-1]
+    return dt.datetime.strptime(s, '%c')
 
 
 def grab_tweets(name_to_get):
-    # download a user's twitter timeline, returning a list of tweets
+    """Download a user's twitter timeline, returning a list of tweets."""
     print("downloading tweets:")
 
     twitter = twitter_auth2()
@@ -73,7 +67,7 @@ def grab_tweets(name_to_get):
 
 
 def make_heated_time_map(sep_array, Nside, width):
-    # plot heated time map. Nothing is returned
+    """Plot heated time map. Nothing is returned."""
     print("generating heated time map ...")
 
     # choose points within specified range. Example plot separations greater than 5 minutes:
@@ -138,7 +132,7 @@ def make_heated_time_map(sep_array, Nside, width):
 
 
 def make_time_map(times_tot_mins, sep_array):
-    # plot standard, scatter-plot time map. Nothing is returned
+    """Plot standard, scatter-plot time map. Nothing is returned."""
     print("rendering normal time map ...")
 
     fig = plt.figure()
@@ -195,16 +189,17 @@ def make_time_map(times_tot_mins, sep_array):
 
 
 def analyze_tweet_times(name_to_get, all_tweets, HEAT):
-    # plots a heated or normal time map, and return lists of time quantities
-    # input:
-    # name_to_get: twitter handle, not including @
-    # all tweets: list of tweets. Each tweet is a nested dictionary
-    # HEAT: Boolean; 1 for a heated time map, 0 for a normal scatterplot
-    #
-    # output:
-    # times: list of datetimes corresponding to each tweet
-    # times_tot_mins: list giving the time elapsed since midnight for each tweet
-    # sep_array: array containing xy coordinates of the time map points
+    """Plots a heated or normal time map, and return lists of time quantities.
+
+    input:
+    name_to_get: twitter handle, not including @
+    all tweets: list of tweets. Each tweet is a nested dictionary
+    HEAT: Boolean; 1 for a heated time map, 0 for a normal scatterplot
+
+    output:
+    times: list of datetimes corresponding to each tweet
+    times_tot_mins: list giving the time elapsed since midnight for each tweet
+    sep_array: array containing xy coordinates of the time map points"""
 
     all_tweets = all_tweets[::-1]  # reverse order so that most recent tweets are at the end
 
