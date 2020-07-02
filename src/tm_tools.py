@@ -91,7 +91,7 @@ def make_heated_time_map(sep_array, n_side, width):
     img = np.zeros((n_side, n_side))
 
     for i in range(len(x_pts)):
-        img[x_pts[i], y_pts[i]] += 1
+        img[int(x_pts[i]), int(y_pts[i])] += 1
 
     img = ndi.gaussian_filter(img, width)  # apply Gaussian filter
     img = np.sqrt(img)  # taking the square root makes the lower values more visible
