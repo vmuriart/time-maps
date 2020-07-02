@@ -45,21 +45,16 @@ def grab_tweets(screen_name):
     twitter = twitter_auth2()
     first = twitter.get_user_timeline(screen_name=screen_name, count=1)
 
-    lis = [first[0]['id']]  # list of tweet id's
+    max_id = first[0]['id']
 
     tweets = []
-    n_packets = 16  # since packets come with 200 tweets each, this will add up to 3,200 (the maximum amount)
+    n_packets = 17  # since packets come with 200 tweets each, this will add up to 3,200 (the maximum amount)
     for i in range(n_packets):
         print("tweet packet =", i + 1)
-        user_timeline = twitter.get_user_timeline(screen_name=screen_name, count=200, max_id=lis[-1] - 1)
-        # if max_id=lis[-1], the earliest tweet from the last packet will be included as well
+        user_timeline = twitter.get_user_timeline(screen_name=screen_name, count=200, max_id=max_id)
 
         tweets += user_timeline
-
-        if i == 0:
-            lis = [tweet['id'] for tweet in user_timeline]
-        else:
-            lis += [tweet['id'] for tweet in user_timeline]
+        max_id = user_timeline[-1]['id'] - 1
 
     tweet_ids = [tweet['id'] for tweet in tweets]
     print("number of unique tweets:", len(set(tweet_ids)))
