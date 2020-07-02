@@ -5,7 +5,6 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.ndimage as ndi
-from colour import Color
 from twython import Twython
 
 
@@ -138,15 +137,9 @@ def make_heated_time_map(sep_array, Nside, width):
     plt.show()
 
 
-def make_time_map(times, times_tot_mins, sep_array, Ncolors):
+def make_time_map(times_tot_mins, sep_array):
     # plot standard, scatter-plot time map. Nothing is returned
     print("rendering normal time map ...")
-
-    # set up color list
-    red = Color("red")
-    blue = Color("blue")
-    color_list = list(red.range_to(blue, Ncolors))  # range of colors evenly spaced on the spectrum between red and blue. Each element is a colour object
-    color_list = [c.hex for c in color_list]  # give hex version
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -233,8 +226,7 @@ def analyze_tweet_times(name_to_get, all_tweets, HEAT):
         width = 4  # the number of pixels that specifies the width of the Gaussians for the Gaussian filter
         make_heated_time_map(sep_array, Nside, width)
     else:
-        Ncolors = 24 * 60  # a different shade for each minute
-        make_time_map(times, times_tot_mins, sep_array, Ncolors)
+        make_time_map(times_tot_mins, sep_array)
 
     print("writing eps file...")
     print("To avoid cluttered labels, you may have to expand the plotting window by dragging, and then save the figure")
