@@ -53,9 +53,7 @@ def grab_tweets(screen_name):
         tweets += user_timeline
         max_id = user_timeline[-1]['id'] - 1
 
-    tweet_ids = [tweet['id'] for tweet in tweets]
-    print("number of unique tweets:", len(set(tweet_ids)))
-
+    print("number of tweets:", len(tweets))
     return tweets
 
 
