@@ -41,12 +41,9 @@ def get_dt(s):
 def grab_tweets(screen_name):
     """Download a user's twitter timeline, returning a list of tweets."""
     print("downloading tweets:")
-
     twitter = twitter_auth2()
-    first = twitter.get_user_timeline(screen_name=screen_name, count=1)
 
-    max_id = first[0]['id']
-
+    max_id = None
     tweets = []
     n_packets = 17  # since packets come with 200 tweets each, this will add up to 3,200 (the maximum amount)
     for i in range(n_packets):
