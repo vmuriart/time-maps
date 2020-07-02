@@ -192,9 +192,9 @@ def analyze_tweet_times(screen_name, tweets, make_heat):
     times_tot_mins: list giving the time elapsed since midnight for each tweet
     sep_array: array containing xy coordinates of the time map points"""
 
-    tweets = tweets[::-1]  # reverse order so that most recent tweets are at the end
+    # reverse order so that most recent tweets are at the end
+    times = [get_dt(tweet['created_at']) for tweet in reversed(tweets)]
 
-    times = [get_dt(tweet['created_at']) for tweet in tweets]
     timezone_shift = dt.timedelta(hours=4)  # times are in GMT. Convert to eastern time.
     times = [time - timezone_shift for time in times]
 
