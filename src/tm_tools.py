@@ -22,11 +22,11 @@ def twitter_auth2():
     """For Twython authentication."""
     secrets = my_secrets()
 
-    APP_KEY = secrets['APP_KEY']
-    APP_SECRET = secrets['APP_SECRET']
+    app_key = secrets['APP_KEY']
+    app_secret = secrets['APP_SECRET']
 
-    twitter = Twython(APP_KEY, APP_SECRET, oauth_version=2)
-    twitter = Twython(APP_KEY, access_token=twitter.obtain_access_token())
+    twitter = Twython(app_key, app_secret, oauth_version=2)
+    twitter = Twython(app_key, access_token=twitter.obtain_access_token())
     return twitter
 
 
@@ -37,36 +37,36 @@ def get_dt(s):
     return dt.datetime.strptime(s, '%c')
 
 
-def grab_tweets(name_to_get):
+def grab_tweets(screen_name):
     """Download a user's twitter timeline, returning a list of tweets."""
     print("downloading tweets:")
 
     twitter = twitter_auth2()
-    first = twitter.get_user_timeline(screen_name=name_to_get, count=1)
+    first = twitter.get_user_timeline(screen_name=screen_name, count=1)
 
     lis = [first[0]['id']]  # list of tweet id's
 
-    all_tweets = []
-    N_packets = 16  # since packets come with 200 tweets each, this will add up to 3,200 (the maximum amount)
-    for i in range(N_packets):
+    tweets = []
+    n_packets = 16  # since packets come with 200 tweets each, this will add up to 3,200 (the maximum amount)
+    for i in range(n_packets):
         print("tweet packet =", i + 1)
-        user_timeline = twitter.get_user_timeline(screen_name=name_to_get, count=200, max_id=lis[-1] - 1)
+        user_timeline = twitter.get_user_timeline(screen_name=screen_name, count=200, max_id=lis[-1] - 1)
         # if max_id=lis[-1], the earliest tweet from the last packet will be included as well
 
-        all_tweets += user_timeline
+        tweets += user_timeline
 
         if i == 0:
             lis = [tweet['id'] for tweet in user_timeline]
         else:
             lis += [tweet['id'] for tweet in user_timeline]
 
-    tweet_ids = [tweet['id'] for tweet in all_tweets]
+    tweet_ids = [tweet['id'] for tweet in tweets]
     print("number of unique tweets:", len(set(tweet_ids)))
 
-    return all_tweets
+    return tweets
 
 
-def make_heated_time_map(sep_array, Nside, width):
+def make_heated_time_map(sep_array, n_side, width):
     """Plot heated time map. Nothing is returned."""
     print("generating heated time map ...")
 
@@ -84,10 +84,10 @@ def make_heated_time_map(sep_array, Nside, width):
 
     max_val = np.max([np.max(x_pts), np.max(y_pts)])
 
-    x_pts *= (Nside - 1) / max_val
-    y_pts *= (Nside - 1) / max_val
+    x_pts *= (n_side - 1) / max_val
+    y_pts *= (n_side - 1) / max_val
 
-    img = np.zeros((Nside, Nside))
+    img = np.zeros((n_side, n_side))
 
     for i in range(len(x_pts)):
         img[x_pts[i], y_pts[i]] += 1
@@ -121,7 +121,7 @@ def make_heated_time_map(sep_array, Nside, width):
     ticks = pure_ticks[index_lower: index_upper + 1]
     ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
     ticks = ticks - min_val
-    ticks *= (Nside - 1) / max_val
+    ticks *= (n_side - 1) / max_val
 
     labels = np.hstack(('', labels[index_lower:index_upper + 1], ''))  # append blank labels to beginning and end
     plt.xticks(ticks, labels, fontsize=16)
@@ -188,22 +188,22 @@ def make_time_map(times_tot_mins, sep_array):
     plt.show()
 
 
-def analyze_tweet_times(name_to_get, all_tweets, HEAT):
+def analyze_tweet_times(screen_name, tweets, make_heat):
     """Plots a heated or normal time map, and return lists of time quantities.
 
     input:
-    name_to_get: twitter handle, not including @
-    all tweets: list of tweets. Each tweet is a nested dictionary
-    HEAT: Boolean; 1 for a heated time map, 0 for a normal scatterplot
+    screen_name: twitter handle, not including @
+    tweets: list of tweets. Each tweet is a nested dictionary
+    heat: Boolean; 1 for a heated time map, 0 for a normal scatterplot
 
     output:
     times: list of datetimes corresponding to each tweet
     times_tot_mins: list giving the time elapsed since midnight for each tweet
     sep_array: array containing xy coordinates of the time map points"""
 
-    all_tweets = all_tweets[::-1]  # reverse order so that most recent tweets are at the end
+    tweets = tweets[::-1]  # reverse order so that most recent tweets are at the end
 
-    times = [get_dt(tweet['created_at']) for tweet in all_tweets]
+    times = [get_dt(tweet['created_at']) for tweet in tweets]
     timezone_shift = dt.timedelta(hours=4)  # times are in GMT. Convert to eastern time.
     times = [time - timezone_shift for time in times]
 
@@ -216,10 +216,10 @@ def analyze_tweet_times(name_to_get, all_tweets, HEAT):
     sep_array[:, 0] = seps[:-1]
     sep_array[:, 1] = seps[1:]
 
-    if HEAT:
-        Nside = 4 * 256  # number of pixels along the x and y directions
+    if make_heat:
+        n_side = 4 * 256  # number of pixels along the x and y directions
         width = 4  # the number of pixels that specifies the width of the Gaussians for the Gaussian filter
-        make_heated_time_map(sep_array, Nside, width)
+        make_heated_time_map(sep_array, n_side, width)
     else:
         make_time_map(times_tot_mins, sep_array)
 
@@ -228,6 +228,6 @@ def analyze_tweet_times(name_to_get, all_tweets, HEAT):
     print("to save as an eps, type: `plt.savefig('filename.eps', format='eps', bbox_inches='tight', dpi=200)`")
     print("Done!")
 
-    plt.savefig(name_to_get + '.eps', format='eps', bbox_inches='tight', dpi=200)  # save as eps
+    plt.savefig(screen_name + '.eps', format='eps', bbox_inches='tight', dpi=200)  # save as eps
 
     return times, times_tot_mins, sep_array
