@@ -203,8 +203,4 @@ def main(screen_name, make_heat=True):
 
 
 if __name__ == '__main__':
-    # change font, which can also now accept latex: http://matplotlib.org/users/usetex.html
-    plt.rc('text', usetex=False)
-    plt.rc('font', family='serif')
-
-    main(screen_name='BarackObama', make_heat=False)
+    main(screen_name='BarackObama', make_heat=True)
