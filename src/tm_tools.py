@@ -92,10 +92,6 @@ def make_heated_time_map(sep_array, n_side, width):
     # create custom tick marks. Calculate positions of tick marks on the transformed log scale of the image array
     plt.minorticks_off()
 
-    # change font, which can also now accept latex: http://matplotlib.org/users/usetex.html
-    plt.rc('text', usetex=False)
-    plt.rc('font', family='serif')
-
     my_max = np.max([np.max(sep_array[indices, 0]), np.max(sep_array[indices, 1])])
     my_min = np.max([np.min(sep_array[indices, 0]), np.min(sep_array[indices, 1])])
 
@@ -119,7 +115,6 @@ def make_heated_time_map(sep_array, n_side, width):
     plt.yticks(ticks, labels, fontsize=16)
     plt.xlabel('Time Before Tweet', fontsize=18)
     plt.ylabel('Time After Tweet', fontsize=18)
-    plt.show()
 
 
 def make_time_map(times_tot_mins, sep_array):
@@ -128,9 +123,6 @@ def make_time_map(times_tot_mins, sep_array):
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-
-    plt.rc('text', usetex=False)
-    plt.rc('font', family='serif')
 
     # see color maps at http://matplotlib.org/users/colormaps.html
     colormap = plt.cm.get_cmap('rainbow')
@@ -176,8 +168,6 @@ def make_time_map(times_tot_mins, sep_array):
 
     ax.set_aspect('equal')
     plt.tight_layout()
-
-    plt.show()
 
 
 def analyze_tweet_times(tweets, make_heat):
@@ -228,7 +218,12 @@ def main(screen_name, make_heat=True):
 
     # create plot
     times, times_tot_mins, sep_array = analyze_tweet_times(tweets, make_heat)
+    plt.show()
 
 
 if __name__ == '__main__':
-    main(screen_name='BarackObama')
+    # change font, which can also now accept latex: http://matplotlib.org/users/usetex.html
+    plt.rc('text', usetex=False)
+    plt.rc('font', family='serif')
+
+    main(screen_name='BarackObama', make_heat=False)
