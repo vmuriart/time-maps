@@ -18,16 +18,13 @@ indices = (x_coords > 0) & (x_coords < 1) & (y_coords > 0) & (y_coords < 1)
 x_coords = x_coords[indices]
 y_coords = y_coords[indices]
 
-plt.subplot(121)  # first, a plot of the points themselves
+fig, (ax0, ax1) = plt.subplots(1, 2)
 
-plt.plot(x_coords, y_coords, 'b.')
-
-plt.xlim((0, 1))
-plt.ylim((0, 1))
+# first, a plot of the points themselves
+ax0.plot(x_coords, y_coords, 'b.')
+ax0.set(xlim=(0, 1), ylim=(0, 1))
 
 # let's make a heatmap
-plt.subplot(122)
-
 n_side = 1024  # this is the number of bins along x and y.
 
 # the 'histogram' matrix that counts the number of points in each grid-square
@@ -45,5 +42,6 @@ H = ndi.gaussian_filter(H, 8)  # 8 specifies the width of the Gaussian kernel in
 H = np.transpose(H)  # so that the orientation is the same as the scatter plot
 # to bring out the individual points more, you can do: `H = np.sqrt(H)`
 
-plt.imshow(H, origin='lower')
+ax1.imshow(H, origin='lower')
+
 plt.show()

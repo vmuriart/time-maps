@@ -77,11 +77,7 @@ def make_heated_time_map(sep_array, n_side, width):
     img = np.sqrt(img)  # taking the square root makes the lower values more visible
     img = np.transpose(img)  # needed so the orientation is the same as scatterplot
 
-    plt.imshow(img, origin='lower')
-
     # create custom tick marks. Calculate positions of tick marks on the transformed log scale of the image array
-    plt.minorticks_off()
-
     pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])
     # where the tick marks will be placed, in units of seconds. An additional value will be appended to the end for the max
     labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
@@ -97,12 +93,16 @@ def make_heated_time_map(sep_array, n_side, width):
     ticks = pure_ticks[index_lower: index_upper + 1]
     ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
     ticks = (ticks - min_val) * (n_side - 1) / max_val
-
     labels = np.hstack(('', labels[index_lower:index_upper + 1], ''))  # append blank labels to beginning and end
-    plt.xticks(ticks, labels, fontsize=16)
-    plt.yticks(ticks, labels, fontsize=16)
-    plt.xlabel('Time Before Tweet', fontsize=18)
-    plt.ylabel('Time After Tweet', fontsize=18)
+
+    fig, ax = plt.subplots()
+    ax.imshow(img, origin='lower')
+
+    ax.set(
+        xticks=ticks, xticklabels=labels, xlabel='Time Before Tweet',
+        yticks=ticks, yticklabels=labels, ylabel='Time After Tweet',
+    )
+    ax.minorticks_off()
 
 
 def make_time_map(sep_array, times_tot_mins):
