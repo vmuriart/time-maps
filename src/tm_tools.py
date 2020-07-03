@@ -139,12 +139,10 @@ def make_time_map(sep_array, times_tot_mins):
     color_bar.ax.invert_xaxis()
     color_bar.ax.tick_params(labelsize=16)
 
-    ax.set_yscale('log')
-    ax.set_xscale('log')
-    ax.set_aspect('equal')
-
     max_val = np.max(sep_array)
     min_val = np.min(sep_array)
+
+    ax.set(aspect='equal', xscale='log', yscale='log')
 
     pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])  # where the tick marks will be placed, in units of seconds.
     ticks = np.hstack((pure_ticks, max_val))
@@ -153,14 +151,12 @@ def make_time_map(sep_array, times_tot_mins):
     plt.xticks(ticks, labels, fontsize=16)
     plt.yticks(ticks, labels, fontsize=16)
 
-    plt.xlim((min_val, max_val))
-    plt.ylim((min_val, max_val))
+    ax.set(xlim=(min_val, max_val), ylim=(min_val, max_val))
+    ax.set_xlabel('Time Before Tweet', fontsize=18)
+    ax.set_ylabel('Time After Tweet', fontsize=18)
+    ax.minorticks_off()
 
-    plt.xlabel('Time Before Tweet', fontsize=18)
-    plt.ylabel('Time After Tweet', fontsize=18)
-
-    plt.minorticks_off()
-    plt.tight_layout()
+    fig.tight_layout()
 
 
 def analyze_tweet_times(tweets, make_heat):
