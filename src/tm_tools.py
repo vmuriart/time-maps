@@ -158,22 +158,21 @@ def make_time_map(times_tot_mins, sep_array):
 
     plt.minorticks_off()
     pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])  # where the tick marks will be placed, in units of seconds.
-    labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
 
     max_val = np.max([np.max(sep_array[:, 0]), np.max(sep_array[:, 1])])
+    min_val = np.min([np.min(sep_array[:, 0]), np.min(sep_array[:, 1])])
 
     ticks = np.hstack((pure_ticks, max_val))
-
-    min_val = np.min([np.min(sep_array[:, 0]), np.min(sep_array[:, 1])])
+    labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
 
     plt.xticks(ticks, labels, fontsize=16)
     plt.yticks(ticks, labels, fontsize=16)
 
-    plt.xlabel('Time Before Tweet', fontsize=18)
-    plt.ylabel('Time After Tweet', fontsize=18)
-
     plt.xlim((min_val, max_val))
     plt.ylim((min_val, max_val))
+
+    plt.xlabel('Time Before Tweet', fontsize=18)
+    plt.ylabel('Time After Tweet', fontsize=18)
 
     ax.set_aspect('equal')
     plt.tight_layout()
