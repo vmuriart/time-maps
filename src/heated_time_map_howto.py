@@ -34,12 +34,12 @@ n_side = 1024  # this is the number of bins along x and y.
 H = np.zeros((n_side, n_side))
 
 # the xy coordinates scaled to the size of the matrix
-x_heat = (n_side - 1) * x_coords
-y_heat = (n_side - 1) * y_coords
+x_heat = ((n_side - 1) * x_coords).astype(int)
+y_heat = ((n_side - 1) * y_coords).astype(int)
 
 # loop over all points to calculate the population of each bin
 for i in range(len(x_coords)):
-    H[int(x_heat[i]), int(y_heat[i])] = H[int(x_heat[i]), int(y_heat[i])] + 1
+    H[x_heat[i], y_heat[i]] += 1
 
 H = ndi.gaussian_filter(H, 8)  # 8 specifies the width of the Gaussian kernel in the x and y directions
 H = np.transpose(H)  # so that the orientation is the same as the scatter plot

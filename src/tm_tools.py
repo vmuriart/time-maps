@@ -64,10 +64,6 @@ def make_heated_time_map(sep_array, n_side, width):
     my_max = np.max(sep_array)
     my_min = np.min(sep_array)
 
-    # choose points within specified range. Example plot separations greater than 5 minutes:
-    # indices = (sep_array[:, 0] > 5 * 60) & (sep_array[:, 1] > 5 * 60)
-    indices = range(len(sep_array))  # all time separations
-
     sep_array = np.log(sep_array)
 
     min_val = np.min(sep_array)
@@ -78,12 +74,11 @@ def make_heated_time_map(sep_array, n_side, width):
 
     sep_array *= (n_side - 1) / max_val
 
-    x_pts = sep_array[indices, 0]
-    y_pts = sep_array[indices, 1]
+    sep_array = sep_array.astype(int)
 
     img = np.zeros((n_side, n_side))
-    for i in range(len(x_pts)):
-        img[int(x_pts[i]), int(y_pts[i])] += 1
+    for i in range(len(sep_array)):
+        img[tuple(sep_array[i])] += 1
 
     img = ndi.gaussian_filter(img, width)  # apply Gaussian filter
     img = np.sqrt(img)  # taking the square root makes the lower values more visible
