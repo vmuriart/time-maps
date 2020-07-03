@@ -61,24 +61,21 @@ def make_heated_time_map(sep_array, n_side, width):
     """Plot heated time map. Nothing is returned."""
     print("generating heated time map ...")
 
-    my_max = sep_array.max()
-    my_min = sep_array.min()
+    array = np.log(sep_array)
 
-    sep_array = np.log(sep_array)
+    min_val = array.min()
 
-    min_val = sep_array.min()
+    array = array - min_val
 
-    sep_array = sep_array - min_val
+    max_val = array.max()
 
-    max_val = sep_array.max()
+    array = array * (n_side - 1) / max_val
 
-    sep_array *= (n_side - 1) / max_val
-
-    sep_array = sep_array.astype(int)
+    array = array.astype(int)
 
     img = np.zeros((n_side, n_side))
-    for i in range(len(sep_array)):
-        img[tuple(sep_array[i])] += 1
+    for i in range(len(array)):
+        img[tuple(array[i])] += 1
 
     img = ndi.gaussian_filter(img, width)  # apply Gaussian filter
     img = np.sqrt(img)  # taking the square root makes the lower values more visible
@@ -93,6 +90,9 @@ def make_heated_time_map(sep_array, n_side, width):
     # where the tick marks will be placed, in units of seconds. An additional value will be appended to the end for the max
     labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
 
+    my_max = sep_array.max()
+    my_min = sep_array.min()
+
     # index of minimum tick that is greater than or equal to the smallest time interval. This will be the first tick with a non-blank label
     # similar to index_lower, but for upperbound
     index_lower = np.min(np.nonzero(pure_ticks >= my_min))
@@ -101,7 +101,7 @@ def make_heated_time_map(sep_array, n_side, width):
     ticks = pure_ticks[index_lower: index_upper + 1]
     ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
     ticks = ticks - min_val
-    ticks *= (n_side - 1) / max_val
+    ticks = ticks * (n_side - 1) / max_val
 
     labels = np.hstack(('', labels[index_lower:index_upper + 1], ''))  # append blank labels to beginning and end
     plt.xticks(ticks, labels, fontsize=16)
