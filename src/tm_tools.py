@@ -181,7 +181,7 @@ def make_time_map(times_tot_mins, sep_array):
     plt.show()
 
 
-def analyze_tweet_times(screen_name, tweets, make_heat):
+def analyze_tweet_times(tweets, make_heat):
     """Plots a heated or normal time map, and return lists of time quantities.
 
     input:
@@ -228,7 +228,7 @@ def main(screen_name, make_heat=True):
     tweets = grab_tweets(screen_name)
 
     # create plot
-    times, times_tot_mins, sep_array = analyze_tweet_times(screen_name, tweets, make_heat)
+    times, times_tot_mins, sep_array = analyze_tweet_times(tweets, make_heat)
 
 
 if __name__ == '__main__':
