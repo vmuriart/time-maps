@@ -68,12 +68,12 @@ def make_heated_time_map(sep_array, n_side, width):
     x_pts = np.log(sep_array[indices, 0])
     y_pts = np.log(sep_array[indices, 1])
 
-    min_val = np.min([np.min(x_pts), np.min(y_pts)])
+    min_val = np.min([x_pts, y_pts])
 
     x_pts = x_pts - min_val
     y_pts = y_pts - min_val
 
-    max_val = np.max([np.max(x_pts), np.max(y_pts)])
+    max_val = np.max([x_pts, y_pts])
 
     x_pts *= (n_side - 1) / max_val
     y_pts *= (n_side - 1) / max_val
@@ -92,8 +92,8 @@ def make_heated_time_map(sep_array, n_side, width):
     # create custom tick marks. Calculate positions of tick marks on the transformed log scale of the image array
     plt.minorticks_off()
 
-    my_max = np.max([np.max(sep_array[indices, 0]), np.max(sep_array[indices, 1])])
-    my_min = np.max([np.min(sep_array[indices, 0]), np.min(sep_array[indices, 1])])
+    my_max = np.max(sep_array)
+    my_min = np.min(sep_array)
 
     pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])
     # where the tick marks will be placed, in units of seconds. An additional value will be appended to the end for the max
@@ -149,11 +149,10 @@ def make_time_map(times_tot_mins, sep_array):
     ax.set_xscale('log')
 
     plt.minorticks_off()
+    max_val = np.max(sep_array)
+    min_val = np.min(sep_array)
+
     pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])  # where the tick marks will be placed, in units of seconds.
-
-    max_val = np.max([np.max(sep_array[:, 0]), np.max(sep_array[:, 1])])
-    min_val = np.min([np.min(sep_array[:, 0]), np.min(sep_array[:, 1])])
-
     ticks = np.hstack((pure_ticks, max_val))
     labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
 
