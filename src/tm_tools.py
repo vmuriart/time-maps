@@ -132,7 +132,8 @@ def make_time_map(times_tot_mins, sep_array):
     plt.rc('text', usetex=False)
     plt.rc('font', family='serif')
 
-    colormap = plt.cm.get_cmap('rainbow')  # see color maps at http://matplotlib.org/users/colormaps.html
+    # see color maps at http://matplotlib.org/users/colormaps.html
+    colormap = plt.cm.get_cmap('rainbow')
 
     order = np.argsort(times_tot_mins[1:-1])  # so that the red dots are on top
     # order = np.arange(1, len(times_tot_mins) - 2) # dots are unsorted
@@ -151,7 +152,8 @@ def make_time_map(times_tot_mins, sep_array):
     color_bar.ax.invert_xaxis()
     color_bar.ax.tick_params(labelsize=16)
 
-    ax.set_yscale('log')  # logarithmic axes
+    # logarithmic axes
+    ax.set_yscale('log')
     ax.set_xscale('log')
 
     plt.minorticks_off()
@@ -198,7 +200,7 @@ def analyze_tweet_times(screen_name, tweets, make_heat):
     timezone_shift = dt.timedelta(hours=4)  # times are in GMT. Convert to eastern time.
     times = [time - timezone_shift for time in times]
 
-    times_tot_mins = 24 * 60 - (60 * np.array([t.hour for t in times]) + np.array([t.minute for t in times]))  # 24 * 60 - number of minutes since midnight
+    times_tot_mins = 24 * 60 - (60 * np.array([t.hour for t in times]) + np.array([t.minute for t in times]))
 
     seps = np.array([(times[i] - times[i - 1]).total_seconds() for i in range(1, len(times))])
     seps[seps == 0] = 1  # convert zero second separations to 1-second separations
@@ -213,13 +215,6 @@ def analyze_tweet_times(screen_name, tweets, make_heat):
         make_heated_time_map(sep_array, n_side, width)
     else:
         make_time_map(times_tot_mins, sep_array)
-
-    print("writing eps file...")
-    print("To avoid cluttered labels, you may have to expand the plotting window by dragging, and then save the figure")
-    print("to save as an eps, type: `plt.savefig('filename.eps', format='eps', bbox_inches='tight', dpi=200)`")
-    print("Done!")
-
-    plt.savefig(screen_name + '.eps', format='eps', bbox_inches='tight', dpi=200)  # save as eps
 
     return times, times_tot_mins, sep_array
 
