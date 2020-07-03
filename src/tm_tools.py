@@ -64,13 +64,9 @@ def make_heated_time_map(sep_array, n_side, width):
     array = np.log(sep_array)
 
     min_val = array.min()
+    max_val = array.max() - min_val
 
-    array = array - min_val
-
-    max_val = array.max()
-
-    array = array * (n_side - 1) / max_val
-
+    array = (array - min_val) * (n_side - 1) / max_val
     array = array.astype(int)
 
     img = np.zeros((n_side, n_side))
@@ -100,8 +96,7 @@ def make_heated_time_map(sep_array, n_side, width):
 
     ticks = pure_ticks[index_lower: index_upper + 1]
     ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
-    ticks = ticks - min_val
-    ticks = ticks * (n_side - 1) / max_val
+    ticks = (ticks - min_val) * (n_side - 1) / max_val
 
     labels = np.hstack(('', labels[index_lower:index_upper + 1], ''))  # append blank labels to beginning and end
     plt.xticks(ticks, labels, fontsize=16)
