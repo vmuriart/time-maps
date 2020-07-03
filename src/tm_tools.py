@@ -99,11 +99,10 @@ def make_heated_time_map(sep_array, n_side, width):
     # where the tick marks will be placed, in units of seconds. An additional value will be appended to the end for the max
     labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
 
-    index_lower = np.min(np.nonzero(pure_ticks >= my_min))
     # index of minimum tick that is greater than or equal to the smallest time interval. This will be the first tick with a non-blank label
-
-    index_upper = np.max(np.nonzero(pure_ticks <= my_max))
     # similar to index_lower, but for upperbound
+    index_lower = np.min(np.nonzero(pure_ticks >= my_min))
+    index_upper = np.max(np.nonzero(pure_ticks <= my_max))
 
     ticks = pure_ticks[index_lower: index_upper + 1]
     ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
@@ -117,15 +116,11 @@ def make_heated_time_map(sep_array, n_side, width):
     plt.ylabel('Time After Tweet', fontsize=18)
 
 
-def make_time_map(times_tot_mins, sep_array):
+def make_time_map(sep_array, times_tot_mins):
     """Plot standard, scatter-plot time map. Nothing is returned."""
     print("rendering normal time map ...")
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-
-    # see color maps at http://matplotlib.org/users/colormaps.html
-    colormap = plt.cm.get_cmap('rainbow')
+    fig, ax = plt.subplots()
 
     order = np.argsort(times_tot_mins[1:-1])  # so that the red dots are on top
     # order = np.arange(1, len(times_tot_mins) - 2) # dots are unsorted
@@ -133,8 +128,8 @@ def make_time_map(times_tot_mins, sep_array):
     sc = ax.scatter(
         sep_array[:, 0][order], sep_array[:, 1][order],
         c=times_tot_mins[1:-1][order],
-        vmin=0, vmax=24 * 60,
-        s=25, cmap=colormap,
+        vmin=0, vmax=24 * 60, s=25,
+        cmap=plt.cm.get_cmap('rainbow'),
         marker='o', edgecolors='none',
     )
     # taken from http://stackoverflow.com/questions/6063876/matplotlib-colorbar-for-scatter
@@ -144,11 +139,10 @@ def make_time_map(times_tot_mins, sep_array):
     color_bar.ax.invert_xaxis()
     color_bar.ax.tick_params(labelsize=16)
 
-    # logarithmic axes
     ax.set_yscale('log')
     ax.set_xscale('log')
+    ax.set_aspect('equal')
 
-    plt.minorticks_off()
     max_val = np.max(sep_array)
     min_val = np.min(sep_array)
 
@@ -165,7 +159,7 @@ def make_time_map(times_tot_mins, sep_array):
     plt.xlabel('Time Before Tweet', fontsize=18)
     plt.ylabel('Time After Tweet', fontsize=18)
 
-    ax.set_aspect('equal')
+    plt.minorticks_off()
     plt.tight_layout()
 
 
@@ -202,7 +196,7 @@ def analyze_tweet_times(tweets, make_heat):
         width = 4  # the number of pixels that specifies the width of the Gaussians for the Gaussian filter
         make_heated_time_map(sep_array, n_side, width)
     else:
-        make_time_map(times_tot_mins, sep_array)
+        make_time_map(sep_array, times_tot_mins)
 
     return times, times_tot_mins, sep_array
 
