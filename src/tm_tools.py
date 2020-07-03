@@ -61,25 +61,27 @@ def make_heated_time_map(sep_array, n_side, width):
     """Plot heated time map. Nothing is returned."""
     print("generating heated time map ...")
 
+    my_max = np.max(sep_array)
+    my_min = np.min(sep_array)
+
     # choose points within specified range. Example plot separations greater than 5 minutes:
     # indices = (sep_array[:, 0] > 5 * 60) & (sep_array[:, 1] > 5 * 60)
-    indices = range(sep_array.shape[0])  # all time separations
+    indices = range(len(sep_array))  # all time separations
 
-    x_pts = np.log(sep_array[indices, 0])
-    y_pts = np.log(sep_array[indices, 1])
+    sep_array = np.log(sep_array)
 
-    min_val = np.min([x_pts, y_pts])
+    min_val = np.min(sep_array)
 
-    x_pts = x_pts - min_val
-    y_pts = y_pts - min_val
+    sep_array = sep_array - min_val
 
-    max_val = np.max([x_pts, y_pts])
+    max_val = np.max(sep_array)
 
-    x_pts *= (n_side - 1) / max_val
-    y_pts *= (n_side - 1) / max_val
+    sep_array *= (n_side - 1) / max_val
+
+    x_pts = sep_array[indices, 0]
+    y_pts = sep_array[indices, 1]
 
     img = np.zeros((n_side, n_side))
-
     for i in range(len(x_pts)):
         img[int(x_pts[i]), int(y_pts[i])] += 1
 
@@ -91,9 +93,6 @@ def make_heated_time_map(sep_array, n_side, width):
 
     # create custom tick marks. Calculate positions of tick marks on the transformed log scale of the image array
     plt.minorticks_off()
-
-    my_max = np.max(sep_array)
-    my_min = np.min(sep_array)
 
     pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])
     # where the tick marks will be placed, in units of seconds. An additional value will be appended to the end for the max
