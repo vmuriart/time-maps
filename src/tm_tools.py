@@ -61,16 +61,16 @@ def make_heated_time_map(sep_array, n_side, width):
     """Plot heated time map. Nothing is returned."""
     print("generating heated time map ...")
 
-    my_max = np.max(sep_array)
-    my_min = np.min(sep_array)
+    my_max = sep_array.max()
+    my_min = sep_array.min()
 
     sep_array = np.log(sep_array)
 
-    min_val = np.min(sep_array)
+    min_val = sep_array.min()
 
     sep_array = sep_array - min_val
 
-    max_val = np.max(sep_array)
+    max_val = sep_array.max()
 
     sep_array *= (n_side - 1) / max_val
 
@@ -131,8 +131,8 @@ def make_time_map(sep_array, times_tot_mins):
     color_bar.ax.set_xticklabels(['Midnight', '18:00', 'Noon', '6:00', 'Midnight'])
     color_bar.ax.invert_xaxis()
 
-    max_val = np.max(sep_array)
-    min_val = np.min(sep_array)
+    max_val = sep_array.max()
+    min_val = sep_array.min()
 
     pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])  # where the tick marks will be placed, in units of seconds.
     ticks = np.hstack((pure_ticks, max_val))
