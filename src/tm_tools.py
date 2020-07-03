@@ -120,11 +120,10 @@ def make_time_map(sep_array, times_tot_mins):
     """Plot standard, scatter-plot time map. Nothing is returned."""
     print("rendering normal time map ...")
 
-    fig, ax = plt.subplots()
-
     order = np.argsort(times_tot_mins[1:-1])  # so that the red dots are on top
     # order = np.arange(1, len(times_tot_mins) - 2) # dots are unsorted
 
+    fig, ax = plt.subplots(subplot_kw=dict(aspect='equal', xscale='log', yscale='log'))
     sc = ax.scatter(
         sep_array[:, 0][order], sep_array[:, 1][order],
         c=times_tot_mins[1:-1][order],
@@ -137,26 +136,19 @@ def make_time_map(sep_array, times_tot_mins):
     color_bar = fig.colorbar(sc, ticks=[0, 24 * 15, 24 * 30, 24 * 45, 24 * 60], orientation='horizontal', shrink=0.5)
     color_bar.ax.set_xticklabels(['Midnight', '18:00', 'Noon', '6:00', 'Midnight'])
     color_bar.ax.invert_xaxis()
-    color_bar.ax.tick_params(labelsize=16)
 
     max_val = np.max(sep_array)
     min_val = np.min(sep_array)
-
-    ax.set(aspect='equal', xscale='log', yscale='log')
 
     pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])  # where the tick marks will be placed, in units of seconds.
     ticks = np.hstack((pure_ticks, max_val))
     labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
 
-    plt.xticks(ticks, labels, fontsize=16)
-    plt.yticks(ticks, labels, fontsize=16)
-
-    ax.set(xlim=(min_val, max_val), ylim=(min_val, max_val))
-    ax.set_xlabel('Time Before Tweet', fontsize=18)
-    ax.set_ylabel('Time After Tweet', fontsize=18)
+    ax.set(
+        xlim=(min_val, max_val), xticks=ticks, xticklabels=labels, xlabel='Time Before Tweet',
+        ylim=(min_val, max_val), yticks=ticks, yticklabels=labels, ylabel='Time After Tweet',
+    )
     ax.minorticks_off()
-
-    fig.tight_layout()
 
 
 def analyze_tweet_times(tweets, make_heat):
