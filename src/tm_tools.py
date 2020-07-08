@@ -153,13 +153,12 @@ def analyze_tweet_times(tweets, make_heat):
     times = pd.to_datetime(times) - pd.Timedelta(hours=4)  # times are in GMT. Convert to eastern time.
     times = times.to_series().reset_index(drop=True)  # convert to Series
 
-    times_tot_mins = 24 * 60 - (60 * times.dt.hour + times.dt.minute)
-
-    seps = (times - times.shift(1)).dt.total_seconds()
-    seps[seps == 0] = 1  # convert zero second separations to 1-second separations
+    times_tot_mins = 24 * 60 - (60 * times.dt.hour + times.dt.minute).values
 
     # 1st column: x-coords, 2nd column: y-coords
+    seps = (times - times.shift(1)).dt.total_seconds()
     sep_array = pd.concat([seps, seps.shift(-1)], axis=1).dropna().values
+    sep_array[sep_array == 0] = 1  # convert zero second separations to 1-second separations
 
     if make_heat:
         n_side = 4 * 256  # number of pixels along the x and y directions
