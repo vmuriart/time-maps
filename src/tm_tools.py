@@ -8,6 +8,10 @@ import scipy.ndimage as ndi
 import yaml
 from twython import Twython
 
+# Custom tick marks. Where the tick marks will be placed, in units of seconds.
+TICKS = (1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600)
+LABELS = ('1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week')
+
 
 def my_secrets():
     """Store your twitter codes.
@@ -70,23 +74,19 @@ def make_heated_time_map(sep_array, n_side, width):
     img = np.sqrt(img)  # taking the square root makes the lower values more visible
     img = np.transpose(img)  # needed so the orientation is the same as scatterplot
 
-    # create custom tick marks. Calculate positions of tick marks on the transformed log scale of the image array
-    pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])
-    # where the tick marks will be placed, in units of seconds. An additional value will be appended to the end for the max
-    labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
-
     my_max = sep_array.max()
     my_min = sep_array.min()
 
     # index of minimum tick that is greater than or equal to the smallest time interval. This will be the first tick with a non-blank label
-    # similar to index_lower, but for upper-bound
-    index_lower = np.min(np.nonzero(pure_ticks >= my_min))
-    index_upper = np.max(np.nonzero(pure_ticks <= my_max))
+    index_lower = np.min(np.nonzero(TICKS >= my_min))
+    index_upper = np.max(np.nonzero(TICKS <= my_max))
 
-    ticks = pure_ticks[index_lower: index_upper + 1]
+    #  Calculate positions of tick marks on the transformed log scale of the image array
+    ticks = TICKS[index_lower: index_upper + 1]
     ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
     ticks = (ticks - min_val) * (n_side - 1) / max_val
-    labels = np.hstack(('', labels[index_lower:index_upper + 1], ''))  # append blank labels to beginning and end
+
+    labels = np.hstack(('', LABELS[index_lower:index_upper + 1], ''))  # append blank labels to beginning and end
 
     fig, ax = plt.subplots()
     ax.imshow(img, origin='lower')
@@ -121,13 +121,11 @@ def make_time_map(sep_array, times_tot_mins):
     max_val = sep_array.max()
     min_val = sep_array.min()
 
-    pure_ticks = np.array([1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600])  # where the tick marks will be placed, in units of seconds.
-    ticks = np.hstack((pure_ticks, max_val))
-    labels = ['1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week']  # tick labels
+    ticks = np.hstack((TICKS, max_val))
 
     ax.set(
-        xlim=(min_val, max_val), xticks=ticks, xticklabels=labels, xlabel='Time Before Tweet',
-        ylim=(min_val, max_val), yticks=ticks, yticklabels=labels, ylabel='Time After Tweet',
+        xlim=(min_val, max_val), xticks=ticks, xticklabels=LABELS, xlabel='Time Before Tweet',
+        ylim=(min_val, max_val), yticks=ticks, yticklabels=LABELS, ylabel='Time After Tweet',
     )
     ax.minorticks_off()
 
