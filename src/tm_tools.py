@@ -13,8 +13,8 @@ TICKS = (1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600)
 LABELS = ('1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week')
 
 
-def my_secrets():
-    """Store your twitter codes.
+def twitter_auth():
+    """For Twitter authentication.
 
     Loads from file `credentials.yml` with the format:
     ```
@@ -23,22 +23,17 @@ def my_secrets():
     ```
     """
     with open('credentials.yml') as f:
-        return yaml.load(f, Loader=yaml.BaseLoader)
-
-
-def twitter_auth2():
-    """For Twython authentication."""
-    secrets = my_secrets()
+        secrets = yaml.load(f, Loader=yaml.BaseLoader)
 
     auth = Twython(secrets['APP_KEY'], secrets['APP_SECRET'], oauth_version=2)
     twitter = Twython(access_token=auth.obtain_access_token())
     return twitter
 
 
-def grab_tweets(screen_name):
+def download_tweets(screen_name):
     """Download a user's twitter timeline, returning a list of tweets."""
     print("Downloading tweets:")
-    twitter = twitter_auth2()
+    twitter = twitter_auth()
 
     max_id = None
     tweets = []
@@ -55,7 +50,11 @@ def grab_tweets(screen_name):
 
 
 def make_heated_time_map(sep_array, n_side, width):
-    """Plot heated time map. Nothing is returned."""
+    """Plot heated time map. Nothing is returned.
+
+    n_side: number of pixels along the x and y directions
+    width: number of pixels that specifies the width of the Gaussian for the Gaussian filter
+    """
     print("Generating heated time map...")
 
     array = np.log(sep_array)
@@ -135,7 +134,7 @@ def make_time_map(sep_array, times_tot_mins):
     ax.minorticks_off()
 
 
-def analyze_tweet_times(tweets, make_heat):
+def analyze_tweet_times(tweets):
     """Plots a heated or normal time map, and return lists of time quantities.
 
     input:
@@ -160,26 +159,22 @@ def analyze_tweet_times(tweets, make_heat):
     sep_array = pd.concat([seps, seps.shift(-1)], axis=1).dropna().values
     sep_array[sep_array == 0] = 1  # convert zero second separations to 1-second separations
 
-    if make_heat:
-        n_side = 4 * 256  # number of pixels along the x and y directions
-        width = 4  # the number of pixels that specifies the width of the Gaussian for the Gaussian filter
-        make_heated_time_map(sep_array, n_side, width)
-    else:
-        make_time_map(sep_array, times_tot_mins)
-
     return times, times_tot_mins, sep_array
 
 
 def main(screen_name, make_heat=True):
-    # specify a twitter username and whether you want a heated time map or a normal time map
-    # an eps file will be saved with the same name as the twitter username
-    # the axes are automatically scaled logarithmically.
+    """Specify a twitter username and whether you want a heated time map or a normal time map."""
+    tweets = download_tweets(screen_name)
 
-    # download tweets
-    tweets = grab_tweets(screen_name)
+    # Prepare data
+    times, times_tot_mins, sep_array = analyze_tweet_times(tweets)
 
-    # create plot
-    times, times_tot_mins, sep_array = analyze_tweet_times(tweets, make_heat)
+    # Create plot
+    if make_heat:
+        make_heated_time_map(sep_array, n_side=4 * 256, width=4)
+    else:
+        make_time_map(sep_array, times_tot_mins)
+
     plt.show()
 
 
