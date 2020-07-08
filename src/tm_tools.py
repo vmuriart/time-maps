@@ -78,14 +78,14 @@ def make_heated_time_map(sep_array, n_side, width):
 
     # index of minimum tick that is greater than or equal to the smallest time interval. This will be the first tick with a non-blank label
     index_lower = np.min(np.nonzero(TICKS >= my_min))
-    index_upper = np.max(np.nonzero(TICKS <= my_max))
+    index_upper = np.max(np.nonzero(TICKS <= my_max)) + 1
 
     #  Calculate positions of tick marks on the transformed log scale of the image array
-    ticks = TICKS[index_lower: index_upper + 1]
+    ticks = TICKS[index_lower: index_upper]
     ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
     ticks = (ticks - min_val) * (n_side - 1) / max_val
 
-    labels = np.hstack(('', LABELS[index_lower:index_upper + 1]))  # append blank labels to beginning
+    labels = np.hstack(('', LABELS[index_lower:index_upper]))  # append blank labels to beginning
 
     fig, ax = plt.subplots()
     ax.imshow(img, origin='lower')
