@@ -37,9 +37,7 @@ def twitter_auth2():
 
 def get_dt(s):
     """Converts a twitter time string to a datetime object."""
-    split = s.split(' ')
-    s = ' '.join(split[:4]) + ' ' + split[-1]
-    return dt.datetime.strptime(s, '%c')
+    return dt.datetime.strptime(s, '%a %b %d %H:%M:%S +0000 %Y')
 
 
 def grab_tweets(screen_name):
