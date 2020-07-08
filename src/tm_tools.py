@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.ndimage as ndi
+import tweepy
 import yaml
-from twython import Twython
 
 
 def my_secrets():
@@ -26,11 +26,9 @@ def twitter_auth2():
     """For Twython authentication."""
     secrets = my_secrets()
 
-    app_key = secrets['APP_KEY']
-    app_secret = secrets['APP_SECRET']
+    auth = tweepy.AppAuthHandler(secrets['APP_KEY'], secrets['APP_SECRET'])
+    twitter = tweepy.API(auth)
 
-    twitter = Twython(app_key, app_secret, oauth_version=2)
-    twitter = Twython(app_key, access_token=twitter.obtain_access_token())
     return twitter
 
 
@@ -44,10 +42,10 @@ def grab_tweets(screen_name):
     n_packets = 17  # since packets come with 200 tweets each, this will add up to 3,200 (the maximum amount)
     for i in range(n_packets):
         print("  Tweet packet:", i + 1)
-        user_timeline = twitter.get_user_timeline(screen_name=screen_name, count=200, max_id=max_id)
+        user_timeline = twitter.user_timeline(screen_name=screen_name, count=200, max_id=max_id)
 
         tweets += user_timeline
-        max_id = user_timeline[-1]['id'] - 1
+        max_id = user_timeline[-1].id - 1
 
     print("Number of tweets:", len(tweets))
     return tweets
@@ -149,7 +147,7 @@ def analyze_tweet_times(tweets, make_heat):
     sep_array: array containing xy coordinates of the time map points"""
 
     # reverse order so that most recent tweets are at the end
-    times = [tweet['created_at'] for tweet in reversed(tweets)]
+    times = [tweet.created_at for tweet in reversed(tweets)]
     times = pd.to_datetime(times) - pd.Timedelta(hours=4)  # times are in GMT. Convert to eastern time.
     times = times.to_series().reset_index(drop=True)  # convert to Series
 
