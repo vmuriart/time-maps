@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import datetime as dt
-
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import scipy.ndimage as ndi
 import yaml
 from twython import Twython
@@ -33,11 +32,6 @@ def twitter_auth2():
     twitter = Twython(app_key, app_secret, oauth_version=2)
     twitter = Twython(app_key, access_token=twitter.obtain_access_token())
     return twitter
-
-
-def get_dt(s):
-    """Converts a twitter time string to a datetime object."""
-    return dt.datetime.strptime(s, '%a %b %d %H:%M:%S +0000 %Y')
 
 
 def grab_tweets(screen_name):
@@ -155,19 +149,17 @@ def analyze_tweet_times(tweets, make_heat):
     sep_array: array containing xy coordinates of the time map points"""
 
     # reverse order so that most recent tweets are at the end
-    times = [get_dt(tweet['created_at']) for tweet in reversed(tweets)]
+    times = [tweet['created_at'] for tweet in reversed(tweets)]
+    times = pd.to_datetime(times) - pd.Timedelta(hours=4)  # times are in GMT. Convert to eastern time.
+    times = times.to_series().reset_index(drop=True)  # convert to Series
 
-    timezone_shift = dt.timedelta(hours=4)  # times are in GMT. Convert to eastern time.
-    times = [time - timezone_shift for time in times]
+    times_tot_mins = 24 * 60 - (60 * times.dt.hour + times.dt.minute)
 
-    times_tot_mins = 24 * 60 - (60 * np.array([t.hour for t in times]) + np.array([t.minute for t in times]))
-
-    seps = np.array([(times[i] - times[i - 1]).total_seconds() for i in range(1, len(times))])
+    seps = (times - times.shift(1)).dt.total_seconds()
     seps[seps == 0] = 1  # convert zero second separations to 1-second separations
 
-    sep_array = np.zeros((len(seps) - 1, 2))  # 1st column: x-coords, 2nd column: y-coords
-    sep_array[:, 0] = seps[:-1]
-    sep_array[:, 1] = seps[1:]
+    # 1st column: x-coords, 2nd column: y-coords
+    sep_array = pd.concat([seps, seps.shift(-1)], axis=1).dropna().values
 
     if make_heat:
         n_side = 4 * 256  # number of pixels along the x and y directions
