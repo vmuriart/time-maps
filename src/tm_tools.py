@@ -86,7 +86,7 @@ def make_heated_time_map(sep_array, n_side, width):
     ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
     ticks = (ticks - min_val) * (n_side - 1) / max_val
 
-    labels = np.hstack(('', LABELS[index_lower:index_upper + 1], ''))  # append blank labels to beginning and end
+    labels = np.hstack(('', LABELS[index_lower:index_upper + 1]))  # append blank labels to beginning
 
     fig, ax = plt.subplots()
     ax.imshow(img, origin='lower')
