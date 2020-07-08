@@ -6,17 +6,21 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.ndimage as ndi
+import yaml
 from twython import Twython
 
 
 def my_secrets():
-    """Store your twitter codes."""
-    d = {
-        'APP_KEY': '--',
-        'APP_SECRET': '--',
-    }
+    """Store your twitter codes.
 
-    return d
+    Loads from file `credentials.yml` with the format:
+    ```
+    'APP_KEY': '---'
+    'APP_SECRET': '---'
+    ```
+    """
+    with open('credentials.yml') as f:
+        return yaml.load(f, Loader=yaml.BaseLoader)
 
 
 def twitter_auth2():
