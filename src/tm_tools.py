@@ -42,26 +42,26 @@ def get_dt(s):
 
 def grab_tweets(screen_name):
     """Download a user's twitter timeline, returning a list of tweets."""
-    print("downloading tweets:")
+    print("Downloading tweets:")
     twitter = twitter_auth2()
 
     max_id = None
     tweets = []
     n_packets = 17  # since packets come with 200 tweets each, this will add up to 3,200 (the maximum amount)
     for i in range(n_packets):
-        print("tweet packet =", i + 1)
+        print("  Tweet packet:", i + 1)
         user_timeline = twitter.get_user_timeline(screen_name=screen_name, count=200, max_id=max_id)
 
         tweets += user_timeline
         max_id = user_timeline[-1]['id'] - 1
 
-    print("number of tweets:", len(tweets))
+    print("Number of tweets:", len(tweets))
     return tweets
 
 
 def make_heated_time_map(sep_array, n_side, width):
     """Plot heated time map. Nothing is returned."""
-    print("generating heated time map ...")
+    print("Generating heated time map...")
 
     array = np.log(sep_array)
 
@@ -88,7 +88,7 @@ def make_heated_time_map(sep_array, n_side, width):
     my_min = sep_array.min()
 
     # index of minimum tick that is greater than or equal to the smallest time interval. This will be the first tick with a non-blank label
-    # similar to index_lower, but for upperbound
+    # similar to index_lower, but for upper-bound
     index_lower = np.min(np.nonzero(pure_ticks >= my_min))
     index_upper = np.max(np.nonzero(pure_ticks <= my_max))
 
@@ -109,7 +109,7 @@ def make_heated_time_map(sep_array, n_side, width):
 
 def make_time_map(sep_array, times_tot_mins):
     """Plot standard, scatter-plot time map. Nothing is returned."""
-    print("rendering normal time map ...")
+    print("Rendering normal time map...")
 
     order = np.argsort(times_tot_mins[1:-1])  # so that the red dots are on top
     # order = np.arange(1, len(times_tot_mins) - 2) # dots are unsorted
@@ -121,8 +121,7 @@ def make_time_map(sep_array, times_tot_mins):
         vmin=0, vmax=24 * 60, s=25,
         cmap=plt.cm.get_cmap('rainbow'),
         marker='o', edgecolors='none',
-    )
-    # taken from http://stackoverflow.com/questions/6063876/matplotlib-colorbar-for-scatter
+    )  # https://stackoverflow.com/a/6065493/5208670
 
     color_bar = fig.colorbar(sc, ticks=[0, 24 * 15, 24 * 30, 24 * 45, 24 * 60], orientation='horizontal', shrink=0.5)
     color_bar.ax.set_xticklabels(['Midnight', '18:00', 'Noon', '6:00', 'Midnight'])
@@ -172,7 +171,7 @@ def analyze_tweet_times(tweets, make_heat):
 
     if make_heat:
         n_side = 4 * 256  # number of pixels along the x and y directions
-        width = 4  # the number of pixels that specifies the width of the Gaussians for the Gaussian filter
+        width = 4  # the number of pixels that specifies the width of the Gaussian for the Gaussian filter
         make_heated_time_map(sep_array, n_side, width)
     else:
         make_time_map(sep_array, times_tot_mins)
