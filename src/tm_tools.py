@@ -56,7 +56,6 @@ def make_heated_time_map(sep_array, n_side, width):
     width: number of pixels that specifies the width of the Gaussian for the Gaussian filter
     """
     print("Generating heated time map...")
-
     array = np.log(sep_array)
 
     min_val = array.min()
@@ -73,6 +72,9 @@ def make_heated_time_map(sep_array, n_side, width):
     img = np.sqrt(img)  # taking the square root makes the lower values more visible
     img = np.transpose(img)  # needed so the orientation is the same as scatterplot
 
+    fig, ax = plt.subplots()
+    ax.imshow(img, origin='lower')
+
     my_max = sep_array.max()
     my_min = sep_array.min()
 
@@ -86,9 +88,6 @@ def make_heated_time_map(sep_array, n_side, width):
     ticks = (ticks - min_val) * (n_side - 1) / max_val
 
     labels = np.hstack(('', LABELS[index_lower:index_upper]))  # append blank labels to beginning
-
-    fig, ax = plt.subplots()
-    ax.imshow(img, origin='lower')
 
     ax.set(
         xticks=ticks, xticklabels=labels, xlabel='Time Before Tweet',
