@@ -102,13 +102,18 @@ def make_time_map(sep_array, times_tot_mins):
     """Plot standard, scatter-plot time map. Nothing is returned."""
     print("Rendering normal time map...")
 
-    order = np.argsort(times_tot_mins[1:-1])  # so that the red dots are on top
-    # order = np.arange(1, len(times_tot_mins) - 2) # dots are unsorted
+    times_tot_mins = times_tot_mins[1:-1]
+    order = np.argsort(times_tot_mins)  # so that the red dots are on top
+    # order = np.arange(1, len(times_tot_mins)) # dots are unsorted
+
+    # Reorder arrays
+    times_tot_mins = times_tot_mins[order]
+    sep_array = sep_array[order]
 
     fig, ax = plt.subplots(subplot_kw=dict(aspect='equal', xscale='log', yscale='log'))
     sc = ax.scatter(
-        sep_array[:, 0][order], sep_array[:, 1][order],
-        c=times_tot_mins[1:-1][order],
+        sep_array[:, 0], sep_array[:, 1],
+        c=times_tot_mins,
         vmin=0, vmax=24 * 60, s=25,
         cmap=plt.cm.get_cmap('rainbow'),
         marker='o', edgecolors='none',
