@@ -102,7 +102,7 @@ def make_time_map(sep_array, times_tot_mins):
     print("Rendering normal time map...")
 
     times_tot_mins = times_tot_mins[1:-1]
-    order = np.argsort(times_tot_mins)  # so that the red dots are on top
+    order = np.argsort(times_tot_mins)[::-1]  # so that the Morning dots are on top
     # order = np.arange(1, len(times_tot_mins)) # dots are unsorted
 
     # Reorder arrays
@@ -119,8 +119,7 @@ def make_time_map(sep_array, times_tot_mins):
     )  # https://stackoverflow.com/a/6065493/5208670
 
     color_bar = fig.colorbar(sc, ticks=[0, 24 * 15, 24 * 30, 24 * 45, 24 * 60], orientation='horizontal', shrink=0.5)
-    color_bar.ax.set_xticklabels(['Midnight', '18:00', 'Noon', '6:00', 'Midnight'])
-    color_bar.ax.invert_xaxis()
+    color_bar.ax.set_xticklabels(['Midnight', '6:00', 'Noon', '18:00', 'Midnight'])
 
     max_val = sep_array.max()
     min_val = sep_array.min()
@@ -152,7 +151,7 @@ def analyze_tweet_times(tweets):
     times = pd.to_datetime(times) - pd.Timedelta(hours=4)  # times are in GMT. Convert to eastern time.
     times = times.to_series().reset_index(drop=True)  # convert to Series
 
-    times_tot_mins = 24 * 60 - (60 * times.dt.hour + times.dt.minute).values
+    times_tot_mins = (60 * times.dt.hour + times.dt.minute).values
 
     # 1st column: x-coords, 2nd column: y-coords
     seps = (times - times.shift(1)).dt.total_seconds()
