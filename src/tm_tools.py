@@ -84,10 +84,9 @@ def make_heated_time_map(sep_array, n_side, width):
 
     #  Calculate positions of tick marks on the transformed log scale of the image array
     ticks = TICKS[index_lower: index_upper]
-    ticks = np.log(np.hstack((my_min, ticks, my_max)))  # append values to beginning and end in order to specify the limits
-    ticks = (ticks - min_val) * (n_side - 1) / max_val
+    ticks = (np.log(ticks) - min_val) * (n_side - 1) / max_val
 
-    labels = np.hstack(('', LABELS[index_lower:index_upper]))  # append blank labels to beginning
+    labels = LABELS[index_lower:index_upper]
 
     ax.set(
         xticks=ticks, xticklabels=labels, xlabel='Time Before Tweet',
@@ -123,11 +122,9 @@ def make_time_map(sep_array, times_tot_mins):
     max_val = sep_array.max()
     min_val = sep_array.min()
 
-    ticks = np.hstack((TICKS, max_val))
-
     ax.set(
-        xlim=(min_val, max_val), xticks=ticks, xticklabels=LABELS, xlabel='Time Before Tweet',
-        ylim=(min_val, max_val), yticks=ticks, yticklabels=LABELS, ylabel='Time After Tweet',
+        xlim=(min_val, max_val), xticks=TICKS, xticklabels=LABELS, xlabel='Time Before Tweet',
+        ylim=(min_val, max_val), yticks=TICKS, yticklabels=LABELS, ylabel='Time After Tweet',
     )
     ax.minorticks_off()
 
