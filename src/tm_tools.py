@@ -59,9 +59,9 @@ def make_heated_time_map(sep_array, n_side, width):
     array = np.log(sep_array)
 
     min_val = array.min()
-    max_val = array.max() - min_val
+    ptp = array.ptp()
 
-    array = (array - min_val) * (n_side - 1) / max_val
+    array = (array - min_val) * (n_side - 1) / ptp
     array = array.astype(int)
 
     img = np.zeros((n_side, n_side))
@@ -76,7 +76,7 @@ def make_heated_time_map(sep_array, n_side, width):
     ax.imshow(img, origin='lower')
 
     #  Calculate positions of tick marks on the transformed log scale of the image array
-    ticks = (np.log(TICKS) - min_val) * (n_side - 1) / max_val
+    ticks = (np.log(TICKS) - min_val) * (n_side - 1) / ptp
 
     ax.set(
         xlim=(0, n_side), xticks=ticks, xticklabels=LABELS, xlabel='Time Before Tweet',
