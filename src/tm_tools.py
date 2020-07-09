@@ -141,14 +141,14 @@ def analyze_tweet_times(tweets):
     times = pd.to_datetime(times) - pd.Timedelta(hours=4)  # times are in GMT. Convert to eastern time.
     times = times.to_series().reset_index(drop=True)  # convert to Series
 
-    times_tot_mins = (60 * times.dt.hour + times.dt.minute).values
+    times_tot_mins = times.dt.hour * 60 + times.dt.minute
 
     # 1st column: x-coords, 2nd column: y-coords
     seps = (times - times.shift(1)).dt.total_seconds()
-    sep_array = pd.concat([seps, seps.shift(-1)], axis=1).dropna().values
+    sep_array = pd.concat([seps, seps.shift(-1)], axis=1).dropna()
     sep_array[sep_array == 0] = 1  # convert zero second separations to 1-second separations
 
-    return times, times_tot_mins, sep_array
+    return times.tolist(), times_tot_mins.values, sep_array.values
 
 
 def main(screen_name):
