@@ -9,7 +9,7 @@ import yaml
 from twython import Twython
 
 # Custom tick marks. Where the tick marks will be placed, in units of seconds.
-TICKS = (1e-3, 1, 10, 60 * 10, 2 * 3600, 1 * 24 * 3600, 7 * 24 * 3600)
+TICKS = (1e-3, 1, 10, 10 * 60, 2 * 3600, 24 * 3600, 7 * 24 * 3600)
 LABELS = ('1 msec', '1 sec', '10 sec', '10 min', '2 hr', '1 day', '1 week')
 
 
@@ -108,7 +108,7 @@ def make_time_map(sep_array, times_tot_mins):
         marker='o', edgecolors='none',
     )  # https://stackoverflow.com/a/6065493/5208670
 
-    color_bar = fig.colorbar(sc, ticks=[0, 24 * 15, 24 * 30, 24 * 45, 24 * 60], orientation='horizontal', shrink=0.5)
+    color_bar = fig.colorbar(sc, ticks=[0, 6 * 60, 12 * 60, 18 * 60, 24 * 60], orientation='horizontal', shrink=0.5)
     color_bar.ax.set_xticklabels(['Midnight', '6:00', 'Noon', '18:00', 'Midnight'])
 
     max_val = sep_array.max()
