@@ -75,22 +75,12 @@ def make_heated_time_map(sep_array, n_side, width):
     fig, ax = plt.subplots()
     ax.imshow(img, origin='lower')
 
-    my_max = sep_array.max()
-    my_min = sep_array.min()
-
-    # index of minimum tick that is greater than or equal to the smallest time interval. This will be the first tick with a non-blank label
-    index_lower = np.min(np.nonzero(TICKS >= my_min))
-    index_upper = np.max(np.nonzero(TICKS <= my_max)) + 1
-
     #  Calculate positions of tick marks on the transformed log scale of the image array
-    ticks = TICKS[index_lower: index_upper]
-    ticks = (np.log(ticks) - min_val) * (n_side - 1) / max_val
-
-    labels = LABELS[index_lower:index_upper]
+    ticks = (np.log(TICKS) - min_val) * (n_side - 1) / max_val
 
     ax.set(
-        xticks=ticks, xticklabels=labels, xlabel='Time Before Tweet',
-        yticks=ticks, yticklabels=labels, ylabel='Time After Tweet',
+        xlim=(0, n_side), xticks=ticks, xticklabels=LABELS, xlabel='Time Before Tweet',
+        ylim=(0, n_side), yticks=ticks, yticklabels=LABELS, ylabel='Time After Tweet',
     )
     ax.minorticks_off()
 
