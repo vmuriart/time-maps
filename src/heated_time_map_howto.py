@@ -31,7 +31,7 @@ ax0.set(xlim=(0, 1), ylim=(0, 1))
 n_side = 1024  # this is the number of bins along x and y.
 
 # the 'histogram' matrix that counts the number of points in each grid-square
-H = np.zeros((n_side, n_side))
+img = np.zeros((n_side, n_side))
 
 # the xy coordinates scaled to the size of the matrix
 x_heat = ((n_side - 1) * x_coords).astype(int)
@@ -39,12 +39,12 @@ y_heat = ((n_side - 1) * y_coords).astype(int)
 
 # loop over all points to calculate the population of each bin
 for i in range(len(x_coords)):
-    H[x_heat[i], y_heat[i]] += 1
+    img[x_heat[i], y_heat[i]] += 1
 
-H = ndi.gaussian_filter(H, 8)  # 8 specifies the width of the Gaussian kernel in the x and y directions
-H = np.transpose(H)  # so that the orientation is the same as the scatter plot
-# to bring out the individual points more, you can do: `H = np.sqrt(H)`
+img = ndi.gaussian_filter(img, 8)  # 8 specifies the width of the Gaussian kernel in the x and y directions
+img = np.transpose(img)  # so that the orientation is the same as the scatter plot
+# to bring out the individual points more, you can do: `img = np.sqrt(img)`
 
-ax1.imshow(H, origin='lower')
+ax1.imshow(img, origin='lower')
 
-plt.show()
+fig.show()
