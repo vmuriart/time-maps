@@ -50,7 +50,7 @@ def download_tweets(screen_name):
 
 
 def make_heated_time_map(sep_array, n_side, width):
-    """Plot heated time map. Nothing is returned.
+    """Plot heated time map.
 
     n_side: number of pixels along the x and y directions
     width: number of pixels that specifies the width of the Gaussian for the Gaussian filter
@@ -84,9 +84,11 @@ def make_heated_time_map(sep_array, n_side, width):
     )
     ax.minorticks_off()
 
+    return fig, ax
+
 
 def make_time_map(sep_array, times_tot_mins):
-    """Plot standard, scatter-plot time map. Nothing is returned."""
+    """Plot standard, scatter-plot time map."""
     print("Rendering normal time map...")
 
     times_tot_mins = times_tot_mins[1:-1]
@@ -117,6 +119,8 @@ def make_time_map(sep_array, times_tot_mins):
         ylim=(min_val, max_val), yticks=TICKS, yticklabels=LABELS, ylabel='Time After Tweet',
     )
     ax.minorticks_off()
+
+    return fig, ax
 
 
 def analyze_tweet_times(tweets):
@@ -156,11 +160,11 @@ def main(screen_name, make_heat=True):
 
     # Create plot
     if make_heat:
-        make_heated_time_map(sep_array, n_side=4 * 256, width=4)
+        fig, ax = make_heated_time_map(sep_array, n_side=4 * 256, width=4)
     else:
-        make_time_map(sep_array, times_tot_mins)
+        fig, ax = make_time_map(sep_array, times_tot_mins)
 
-    plt.show()
+    fig.show()
 
 
 if __name__ == '__main__':
