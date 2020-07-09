@@ -151,21 +151,20 @@ def analyze_tweet_times(tweets):
     return times, times_tot_mins, sep_array
 
 
-def main(screen_name, make_heat=True):
+def main(screen_name):
     """Specify a twitter username and whether you want a heated time map or a normal time map."""
     tweets = download_tweets(screen_name)
 
     # Prepare data
     times, times_tot_mins, sep_array = analyze_tweet_times(tweets)
 
-    # Create plot
-    if make_heat:
-        fig, ax = make_heated_time_map(sep_array, n_side=4 * 256, width=4)
-    else:
-        fig, ax = make_time_map(sep_array, times_tot_mins)
+    # Create plots
+    fig, ax = make_heated_time_map(sep_array, n_side=4 * 256, width=4)
+    fig.show()
 
+    fig, ax = make_time_map(sep_array, times_tot_mins)
     fig.show()
 
 
 if __name__ == '__main__':
-    main(screen_name='BarackObama', make_heat=True)
+    main(screen_name='BarackObama')
