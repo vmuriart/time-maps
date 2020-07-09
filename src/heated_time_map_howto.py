@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.ndimage as ndi
 
+# For reproducibility
+np.random.seed(0)
+
 # this code shows how to create a smoothed heatmap of a scatterplot using a Gaussian filter
 # see also http://stackoverflow.com/questions/6652671/efficient-method-of-calculating-density-of-irregularly-spaced-points
 
